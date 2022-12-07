@@ -1,0 +1,7 @@
+<svg width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="40.3893" y="40.3893" width="40.3893" height="40.3893" rx="20.1947"
+        transform="rotate(-180 40.3893 40.3893)" fill="black" />
+    <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M14.4169 24.2071L20.3001 34.1756L30.2281 17.3537L25.7828 17.3537L25.7828 8.25744L14.319 8.25744L14.319 17.3537L10.3722 17.3537L14.319 24.0412L14.319 24.2071L14.4169 24.2071Z"
+        fill="#FFC700" />
+</svg>

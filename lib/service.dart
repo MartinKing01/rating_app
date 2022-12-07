@@ -1,0 +1,118 @@
+
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:rating_app/main.dart';
+
+import 'logic.dart';
+
+const _baseUrl = "api.punkapi.com/v2/";
+
+class PunkService {
+  final _dio = Dio();
+
+  PunkService() {
+    _dio.options.baseUrl = "https://$_baseUrl/";
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (request, handler) {
+          print("Request: 1");
+          handler.next(request);
+        },
+        onResponse: (response, handler) {
+          print("Response: 1");
+          handler.next(response);
+        },
+      ),
+    );
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (request, handler) {
+          print("Request: 2");
+          handler.next(request);
+        },
+        onResponse: (response, handler) {
+          print("Response: 2");
+          handler.next(response);
+        },
+      ),
+    );
+    _dio.interceptors.add(InterceptorsWrapper(onRequest: (request, handler) {
+      handler.next(request);
+    }));
+    _dio.interceptors.add(LogInterceptor());
+    _dio.interceptors.add(
+      InterceptorsWrapper(onError: (error, handler) async {
+        var scaffoldMessenger = scaffoldMessengerKey.currentState;
+        if (scaffoldMessenger != null && scaffoldMessenger.mounted == true) {
+          var snackbarResult = scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: const Text("Hálózati hiba!"),
+              action: SnackBarAction(
+                label: 'RETRY',
+                onPressed: () {},
+              ),
+              duration: const Duration(seconds: 10),
+            ),
+          );
+          var reason = await snackbarResult.closed;
+          if (reason == SnackBarClosedReason.action) {
+            handler.resolve(await _dio.requestOption(error.requestOptions));
+            return;
+          }
+        }
+        handler.next(error);
+      }),
+    );
+  }
+
+  Future<List<Beer>> getBeers(List<int> ids) async {
+    var response = await _dio.get(
+      "beers",
+      queryParameters: {
+        "ids": ids.join('|'),
+      },
+    );
+    return beerListFromJson(response.data);
+  }
+
+  Future<List<Beer>> getBeerPage(int page, int beerPerPage, {String? filter}) async{
+    var response = await _dio.get(
+      "beers",
+      queryParameters: {
+        "page": page,
+        "per_page": beerPerPage,
+        if(filter != null) "beer_name" : filter,
+      },
+    );
+    return beerListFromJson(response.data);
+  }
+}
+
+extension _DioRequestOption on Dio {
+  Future<Response<T>> requestOption<T>(RequestOptions requestOptions) {
+    return request(
+      requestOptions.path,
+      cancelToken: requestOptions.cancelToken,
+      options: Options(
+        method: requestOptions.method,
+        contentType: requestOptions.contentType,
+        extra: requestOptions.extra,
+        followRedirects: requestOptions.followRedirects,
+        headers: requestOptions.headers,
+        listFormat: requestOptions.listFormat,
+        maxRedirects: requestOptions.maxRedirects,
+        receiveDataWhenStatusError: requestOptions.receiveDataWhenStatusError,
+        receiveTimeout: requestOptions.receiveTimeout,
+        requestEncoder: requestOptions.requestEncoder,
+        responseDecoder: requestOptions.responseDecoder,
+        responseType: requestOptions.responseType,
+        sendTimeout: requestOptions.sendTimeout,
+        validateStatus: requestOptions.validateStatus,
+      ),
+      queryParameters: requestOptions.queryParameters,
+      data: requestOptions.data,
+      onReceiveProgress: requestOptions.onReceiveProgress,
+      onSendProgress: requestOptions.onSendProgress,
+    );
+  }
+}
