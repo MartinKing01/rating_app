@@ -67,7 +67,7 @@ class TopPage extends StatelessWidget {
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
                       var list = rearrange(snapshot.data as List<Beer>);
-                      return BeerList(list);
+                      return BeerList(list, topWidget: true,);
                     } else if (snapshot.hasError) {
                       print(snapshot.error);
                       return Text("Error loading list of beers");
