@@ -100,7 +100,7 @@ class _RatingBlockState extends State<RatingBlock> {
 
   void voteBeer(bool up) async {
     var rating = getRating();
-    var updatedRating = max((await rating) + ((up == true) ? 1 : -1), 0);
+    var updatedRating = (await rating) + ((up == true) ? 1 : -1);
     var reference = getReference();
     var doc = {"rating": updatedRating};
     reference.set(doc, SetOptions(merge: true));
@@ -133,6 +133,7 @@ class _RatingBlockState extends State<RatingBlock> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
+                    flex: 10,
                     child: FittedBox(
                       fit: BoxFit.contain,
                       child: Container(
@@ -147,7 +148,9 @@ class _RatingBlockState extends State<RatingBlock> {
                       ),
                     ),
                   ),
+                  Spacer(flex: 1),
                   Expanded(
+                    flex: 10,
                     child: FittedBox(
                         fit: BoxFit.contain,
                         child: FutureBuilder(
@@ -163,7 +166,9 @@ class _RatingBlockState extends State<RatingBlock> {
                               }
                             })),
                   ),
+                  Spacer(flex: 1),
                   Expanded(
+                    flex: 10,
                     child: FittedBox(
                       fit: BoxFit.contain,
                       child: Container(
@@ -263,6 +268,7 @@ class DescriptionBlock extends StatelessWidget {
                   value: '${beer.abv}%',
                 ),
               ),
+              Spacer(flex: 1),
               Expanded(
                   flex: 2,
                   child: ValueBlock(

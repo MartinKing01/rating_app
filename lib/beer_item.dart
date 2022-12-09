@@ -124,19 +124,6 @@ class FitHeightText extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        // return TextOneLine(
-        //   text,
-        //   textAlign: textAlign,
-        //   overflow: TextOverflow.ellipsis,
-        //   style: TextStyle(
-        //       height: 1,
-        //       fontSize: constraints.maxHeight,
-        //       fontWeight: FontWeight.bold),
-        //   strutStyle: StrutStyle(
-        //     fontSize: constraints.maxHeight,
-        //     height: 1,
-        //   ),
-        // );
         return AutoSizeText(text,
             textAlign: textAlign,
             minFontSize: 1,

@@ -9,6 +9,7 @@ import 'package:rating_app/main.dart';
 import 'package:rating_app/page_header.dart';
 import 'package:rating_app/repo.dart';
 import 'package:rating_app/top_page.dart';
+import 'package:flutter/services.dart';
 
 import 'beer_item.dart';
 import 'chip_list.dart';
@@ -115,6 +116,9 @@ class _ListPageState extends State<ListPage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Theme.of(context).primaryColor, //or set color with: Color(0xFF0000FF)
+    ));
     return Scaffold(
       body: RefreshIndicator(
           onRefresh: loadFirstPage,
@@ -134,7 +138,7 @@ class _ListPageState extends State<ListPage> {
                         Expanded(
                             flex: 2,
                             child: FractionallySizedBox(
-                                heightFactor: 0.5,
+                                heightFactor: 0.8,
                                 alignment: Alignment.center,
                                 child: ChipList(
                                   filters: filters,
@@ -204,6 +208,7 @@ class TopButton extends StatelessWidget {
                     heightFactor: 0.4,
                     child: AutoSizeText(
                       text,
+                      minFontSize: 1,
                       style: textStyle,
                     )))));
   }
@@ -225,22 +230,17 @@ class NameIconPageHeader extends StatelessWidget {
       child: Column(
         children: [
           const Spacer(flex: 1),
-          Expanded(
-            flex: 4,
+          Flexible(
+            flex: 2,
             child: FractionallySizedBox(
-              heightFactor: 0.5,
+              heightFactor: 0.9,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  AutoSizeText(
-                    '$title ',
-                    style: const TextStyle(
-                        fontSize: 400,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                  Flexible(
+                    child: AutoSizeText('$title ', style: TextStyle(fontSize: 400, color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
-                  SvgPicture.asset(iconPath)
+                  Flexible(child: SvgPicture.asset(iconPath))
                 ],
               ),
             ),

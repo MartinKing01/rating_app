@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rating_app/beer_list.dart';
 import 'package:rating_app/list_page.dart';
 import 'package:rating_app/repo.dart';
@@ -17,10 +18,11 @@ class TopPage extends StatelessWidget {
 
   final repository = ListRepository();
 
-  TopPage({super.key,
-    required this.title,
-    required this.button,
-    required this.ascending});
+  TopPage(
+      {super.key,
+      required this.title,
+      required this.button,
+      required this.ascending});
 
   CollectionReference getReference() {
     return db.collection("beers");
@@ -37,34 +39,46 @@ class TopPage extends StatelessWidget {
     return repository.getBeers(idList);
   }
 
+  List<Beer> rearrange(List<Beer> list) {
+    return [
+      for (int id in idList) list.where((element) => element.id == id).single
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Column(
-          children: [
-            Expanded(
-                flex: 30,
-                child: NameIconPageHeader(
-                  title: title,
-                  iconPath: "assets/beer_icon.svg",
-                )),
-            Flexible(
-                flex: 60,
-                child: FutureBuilder(
-                    future: getTopN(5, ascending),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData) {
-                        return BeerList((snapshot.data as List<Beer>));
-                      } else if (snapshot.hasError) {
-                        print(snapshot.error);
-                        return Text("ANADSADSADSA");
-                      } else {
-                        return CircularProgressIndicator();
-                      }
-                    })),
-            Expanded(flex: 10, child: button),
-            Spacer(flex: 5)
-          ],
-        ));
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Theme.of(context).primaryColor,
+    ));
+    return SafeArea(
+      child: Scaffold(
+          body: Column(
+        children: [
+          Expanded(
+              flex: 4,
+              child: NameIconPageHeader(
+                title: title,
+                iconPath: "assets/beer_icon.svg",
+              )),
+          Flexible(
+              flex: 20,
+              child: FutureBuilder(
+                  future: getTopN(5, ascending),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      var list = rearrange(snapshot.data as List<Beer>);
+                      return BeerList(list);
+                    } else if (snapshot.hasError) {
+                      print(snapshot.error);
+                      return Text("Error loading list of beers");
+                    } else {
+                      return CircularProgressIndicator();
+                    }
+                  })),
+          Expanded(flex: 2, child: button),
+          Spacer(flex: 1)
+        ],
+      )),
+    );
   }
 }
