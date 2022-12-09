@@ -1,2 +1,2 @@
-# rating_app
+# BeeR - Beer rating application
  
